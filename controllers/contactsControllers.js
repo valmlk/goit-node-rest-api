@@ -2,7 +2,7 @@
 import HttpError from '../helpers/HttpError.js';
 // import { createContactSchema, updateContactSchema, patchContactSchema } from '../schemas/contactsSchemas.js';
 
-import Contact from "../models/contact.js";
+import Contact from '../models/contact.js';
 
 export const getAllContacts = async (req, res, next) => {
   try {
@@ -70,7 +70,7 @@ export const updateContact = async (req, res, next) => {
     //   throw HttpError(400, error.message);
     // }
 
-    const result = await Contact.findByIdAndUpdate(id, body, {new: true});
+    const result = await Contact.findByIdAndUpdate(id, body, { new: true });
 
     if (!result || result.message === 'Not found') {
       throw HttpError(404);
@@ -82,12 +82,16 @@ export const updateContact = async (req, res, next) => {
   }
 };
 
-export const updateFavorite = async(req, res, next) => {
-  const { id } = req.params;
-  const {favorite} = req.body;
-    const result = await Contact.findByIdAndUpdate(id, {favorite}, {new: true});
+export const updateFavorite = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { favorite } = req.body;
+    const result = await Contact.findByIdAndUpdate(id, { favorite }, { new: true });
     if (!result) {
-        throw HttpError(404, "Not found");
+      throw HttpError(404, 'Not found');
     }
     res.json(result);
+  } catch (error) {
+    next(error);
+  }
 };
